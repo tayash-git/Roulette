@@ -1,9 +1,59 @@
-﻿using System.Runtime.Serialization.Formatters.Binary;
+﻿using System.Text;
 
 int cash = 500;
 
 Random rand = new Random();
 Logger logger = new Logger();
+
+logger.InformationLog("Locating data.dat");
+
+Thread.Sleep(500);
+
+try
+{
+    if (!File.Exists("data/data.dat"))
+    {
+        logger.WarningLog("data.dat not found. Setting up new file");
+
+        Directory.CreateDirectory("data");
+
+        using (FileStream fs = File.Create("data/data.dat"))
+
+        Thread.Sleep(2500);
+
+        File.WriteAllBytes("data/data.dat", Encoding.UTF8.GetBytes(cash.ToString()));
+
+        Thread.Sleep(2000);
+
+        logger.GeneralLog("Success", "data.dat created", ConsoleColor.DarkGreen, ConsoleColor.White);
+
+        Thread.Sleep(3000);
+    }
+    else
+    {
+        logger.GeneralLog("Success", "data.dat found", ConsoleColor.DarkGreen, ConsoleColor.White);
+        Thread.Sleep(200);
+
+        logger.InformationLog("Loading data");
+
+        cash = Convert.ToInt32(Encoding.UTF8.GetString(File.ReadAllBytes("data/data.dat")));
+
+        logger.GeneralLog("Success", "Loaded data", ConsoleColor.DarkGreen, ConsoleColor.White);
+
+        Thread.Sleep(3000);
+    }
+}
+catch (Exception ex)
+{
+    logger.CriticalLog(ex.Message + " Closing application.");
+    logger.GeneralLog("Stack Trace", ex.StackTrace, ConsoleColor.DarkRed, ConsoleColor.Red);
+
+    Thread.Sleep(5000);
+
+    Environment.Exit(0);
+}
+
+Console.Clear();
 
 while (true)
 {
@@ -24,58 +74,711 @@ while (true)
 
         logger.InputLog();
 
-        byte choice = Convert.ToByte(Console.ReadKey().KeyChar);
-
-        if (choice > 4 || choice < 1)
-        {
-            logger.ErrorLog("Input beyond valid range");
-
-            Thread.Sleep(5000);
-
-            Console.Clear();
-
-            goto start;
-        }
+        byte input = Convert.ToByte(Console.ReadLine());
 
         Console.WriteLine("");
+
+        switch (input)
+        {
+            case 1:
+                Console.Clear();
+
+                logger.InformationLog("Bet on a number between 0 and 36");
+                int bet = Convert.ToInt32(Console.ReadLine());
+
+                logger.InformationLog("Insert amount to bet");
+                int amountToBet = Convert.ToInt32(Console.ReadLine());
+
+                if (amountToBet <= 0)
+                {
+                    logger.ErrorLog("Amount can not be 0 or negative");
+                    
+                    Thread.Sleep(5000);
+
+                    Console.Clear();
+
+                    goto start;
+                } else if (amountToBet > cash)
+                {
+                    logger.ErrorLog("Insufficient funds");
+
+                    Thread.Sleep(5000);
+
+                    Console.Clear();
+
+                    goto start;
+                } else if (amountToBet == cash)
+                {
+                    Console.Clear();
+                    logger.WarningLog("Confirm betting all funds");
+
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.Write("[Y] ");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write("/");
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine(" [N]");
+
+                    Console.WriteLine("");
+
+                    logger.InputLog();
+
+                    string choice = Console.ReadLine().ToLower();
+
+                    switch (choice)
+                    {
+                        case "y":
+                            cash -= amountToBet;
+
+                            Console.Clear();
+                            logger.InformationLog("Spinning.");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning..");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning...");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning.");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning..");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning...");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning.");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning..");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning...");
+                            Thread.Sleep(500);
+                            Console.Clear();
+
+                            int chosenNumber = rand.Next(1, 2);
+
+                            logger.GeneralLog("Result", chosenNumber.ToString(), ConsoleColor.DarkCyan, ConsoleColor.White);
+
+                            Console.WriteLine();
+
+                            if (bet == chosenNumber)
+                            {
+                                logger.GeneralLog("Win", $"You've won ${amountToBet * 35}", ConsoleColor.DarkGreen, ConsoleColor.White);
+
+                                cash += amountToBet * 35;
+                            } else
+                            {
+                                logger.GeneralLog("Loss", $"You've lost ${amountToBet}", ConsoleColor.DarkRed, ConsoleColor.White);
+                            }
+
+                            Console.WriteLine();
+
+                            logger.GeneralLog("Balance", $"${cash}", ConsoleColor.DarkGreen, ConsoleColor.White);
+
+                            File.WriteAllBytes("data/data.dat", Encoding.UTF8.GetBytes(cash.ToString()));
+
+                            Thread.Sleep(3000);
+
+                            Console.Clear();
+                            break;
+
+                        case "n":
+                            logger.InformationLog("Returning to main menu.");
+
+                            Thread.Sleep(3000);
+
+                            goto start;
+
+                        default:
+                            logger.ErrorLog("Invalid input. Returning to main menu.");
+
+                            Thread.Sleep(5000);
+
+                            goto start;
+                    }
+                } else
+                {
+                    cash -= amountToBet;
+
+                    Console.Clear();
+                    logger.InformationLog("Spinning.");
+                    Thread.Sleep(500);
+                    Console.Clear();
+                    logger.InformationLog("Spinning..");
+                    Thread.Sleep(500);
+                    Console.Clear();
+                    logger.InformationLog("Spinning...");
+                    Thread.Sleep(500);
+                    Console.Clear();
+                    logger.InformationLog("Spinning.");
+                    Thread.Sleep(500);
+                    Console.Clear();
+                    logger.InformationLog("Spinning..");
+                    Thread.Sleep(500);
+                    Console.Clear();
+                    logger.InformationLog("Spinning...");
+                    Thread.Sleep(500);
+                    Console.Clear();
+                    logger.InformationLog("Spinning.");
+                    Thread.Sleep(500);
+                    Console.Clear();
+                    logger.InformationLog("Spinning..");
+                    Thread.Sleep(500);
+                    Console.Clear();
+                    logger.InformationLog("Spinning...");
+                    Thread.Sleep(500);
+                    Console.Clear();
+
+                    int chosenNumber = rand.Next(1, 2);
+
+                    logger.GeneralLog("Result", chosenNumber.ToString(), ConsoleColor.DarkCyan, ConsoleColor.White);
+
+                    Console.WriteLine();
+
+                    if (bet == chosenNumber)
+                    {
+                        logger.GeneralLog("Win", $"You've won ${amountToBet * 35}", ConsoleColor.DarkGreen, ConsoleColor.White);
+
+                        cash += amountToBet * 35;
+                    }
+                    else
+                    {
+                        logger.GeneralLog("Loss", $"You've lost ${amountToBet}", ConsoleColor.DarkRed, ConsoleColor.White);
+                    }
+
+                    Console.WriteLine();
+
+                    logger.GeneralLog("Balance", $"${cash}", ConsoleColor.DarkGreen, ConsoleColor.White);
+
+                    File.WriteAllBytes("data/data.dat", Encoding.UTF8.GetBytes(cash.ToString()));
+
+                    Thread.Sleep(3000);
+
+                    Console.Clear();
+                }
+
+                break;
+
+            case 2:
+                Console.Clear();
+                logger.InformationLog("Bet on a color");
+
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.Write("[Black]");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write(" /");
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine(" [Red]");
+
+                logger.InputLog();
+
+                string choice2 = Console.ReadLine().ToLower();
+
+                Random rand2 = new Random();
+
+                int ran = rand2.Next(1, 3);
+
+                switch (choice2)
+                {
+                    case "black":
+                        logger.InformationLog("Insert amount to bet");
+                        int amountToBet2 = Convert.ToInt32(Console.ReadLine());
+
+                        if (amountToBet2 <= 0)
+                        {
+                            logger.ErrorLog("Amount can not be 0 or negative");
+
+                            Thread.Sleep(5000);
+
+                            Console.Clear();
+
+                            goto start;
+                        } else if (amountToBet2 > cash)
+                        {
+                            logger.ErrorLog("Insufficient funds");
+
+                            Thread.Sleep(5000);
+
+                            Console.Clear();
+
+                            goto start;
+                        } else if (amountToBet2 == cash)
+                        {
+                            Console.Clear();
+                            logger.WarningLog("Confirm betting all funds");
+
+                            Console.ForegroundColor = ConsoleColor.DarkGreen;
+                            Console.Write("[Y] ");
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.Write("/");
+                            Console.ForegroundColor = ConsoleColor.DarkRed;
+                            Console.WriteLine(" [N]");
+
+                            Console.WriteLine("");
+
+                            logger.InputLog();
+
+                            string confirmbet = Console.ReadLine().ToLower();
+
+                            switch (confirmbet)
+                            {
+                                case "y":
+                                    cash -= amountToBet2;
+
+                                    Console.Clear();
+                                    logger.InformationLog("Spinning.");
+                                    Thread.Sleep(500);
+                                    Console.Clear();
+                                    logger.InformationLog("Spinning..");
+                                    Thread.Sleep(500);
+                                    Console.Clear();
+                                    logger.InformationLog("Spinning...");
+                                    Thread.Sleep(500);
+                                    Console.Clear();
+                                    logger.InformationLog("Spinning.");
+                                    Thread.Sleep(500);
+                                    Console.Clear();
+                                    logger.InformationLog("Spinning..");
+                                    Thread.Sleep(500);
+                                    Console.Clear();
+                                    logger.InformationLog("Spinning...");
+                                    Thread.Sleep(500);
+                                    Console.Clear();
+                                    logger.InformationLog("Spinning.");
+                                    Thread.Sleep(500);
+                                    Console.Clear();
+                                    logger.InformationLog("Spinning..");
+                                    Thread.Sleep(500);
+                                    Console.Clear();
+                                    logger.InformationLog("Spinning...");
+                                    Thread.Sleep(500);
+                                    Console.Clear();
+
+                                    if (ran == 1)
+                                    {
+                                        logger.GeneralLog("Result", "Black", ConsoleColor.DarkCyan, ConsoleColor.White);
+                                    } else if (ran == 2)
+                                    {
+                                        logger.GeneralLog("Result", "Red", ConsoleColor.DarkCyan, ConsoleColor.White);
+                                    } else
+                                    {
+                                        logger.GeneralLog("Result", "undefined", ConsoleColor.DarkCyan, ConsoleColor.White);
+                                    }
+
+                                    Console.WriteLine();
+
+                                    if (ran == 1)
+                                    {
+                                        logger.GeneralLog("Win", $"You've won ${amountToBet2 * 2}", ConsoleColor.DarkGreen, ConsoleColor.White);
+
+                                        cash += amountToBet2 * 2;
+                                    } else
+                                    {
+                                        logger.GeneralLog("Loss", $"You've lost ${amountToBet2}", ConsoleColor.DarkRed, ConsoleColor.White);
+                                    }
+
+                                    Console.WriteLine();
+
+                                    logger.GeneralLog("Balance", $"${cash}", ConsoleColor.DarkGreen, ConsoleColor.White);
+
+                                    File.WriteAllBytes("data/data.dat", Encoding.UTF8.GetBytes(cash.ToString()));
+
+                                    Thread.Sleep(3000);
+
+                                    Console.Clear();
+
+                                    break;
+
+                                case "n":
+                                    logger.InformationLog("Returning to main menu.");
+
+                                    Thread.Sleep(3000);
+
+                                    Console.Clear();
+
+                                    goto start;
+
+                                default:
+                                    logger.ErrorLog("Invalid input. Returning to main menu.");
+
+                                    Thread.Sleep(3000);
+
+                                    Console.Clear();
+
+                                    goto start;
+                            }
+                        } else
+                        {
+                            cash -= amountToBet2;
+
+                            Console.Clear();
+                            logger.InformationLog("Spinning.");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning..");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning...");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning.");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning..");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning...");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning.");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning..");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning...");
+                            Thread.Sleep(500);
+                            Console.Clear();
+
+                            if (ran == 1)
+                            {
+                                logger.GeneralLog("Result", "Black", ConsoleColor.DarkCyan, ConsoleColor.White);
+                            }
+                            else if (ran == 2)
+                            {
+                                logger.GeneralLog("Result", "Red", ConsoleColor.DarkCyan, ConsoleColor.White);
+                            }
+                            else
+                            {
+                                logger.GeneralLog("Result", "undefined", ConsoleColor.DarkCyan, ConsoleColor.White);
+                            }
+
+                            Console.WriteLine();
+
+                            if (ran == 1)
+                            {
+                                logger.GeneralLog("Win", $"You've won ${amountToBet2 * 2}", ConsoleColor.DarkGreen, ConsoleColor.White);
+
+                                cash += amountToBet2 * 2;
+                            }
+                            else
+                            {
+                                logger.GeneralLog("Loss", $"You've lost ${amountToBet2}", ConsoleColor.DarkRed, ConsoleColor.White);
+                            }
+
+                            Console.WriteLine();
+
+                            logger.GeneralLog("Balance", $"${cash}", ConsoleColor.DarkGreen, ConsoleColor.White);
+
+                            File.WriteAllBytes("data/data.dat", Encoding.UTF8.GetBytes(cash.ToString()));
+
+                            Thread.Sleep(3000);
+
+                            Console.Clear();
+
+                            break;
+                        }
+
+                        break;
+
+                    case "red":
+                        logger.InformationLog("Insert amount to bet");
+                        int amountToBet3 = Convert.ToInt32(Console.ReadLine());
+
+                        if (amountToBet3 <= 0)
+                        {
+                            logger.ErrorLog("Amount can not be 0 or negative");
+
+                            Thread.Sleep(5000);
+
+                            Console.Clear();
+
+                            goto start;
+                        }
+                        else if (amountToBet3 > cash)
+                        {
+                            logger.ErrorLog("Insufficient funds");
+
+                            Thread.Sleep(5000);
+
+                            Console.Clear();
+
+                            goto start;
+                        }
+                        else if (amountToBet3 == cash)
+                        {
+                            Console.Clear();
+                            logger.WarningLog("Confirm betting all funds");
+
+                            Console.ForegroundColor = ConsoleColor.DarkGreen;
+                            Console.Write("[Y] ");
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.Write("/");
+                            Console.ForegroundColor = ConsoleColor.DarkRed;
+                            Console.WriteLine(" [N]");
+
+                            Console.WriteLine("");
+
+                            logger.InputLog();
+
+                            string confirmbet = Console.ReadLine().ToLower();
+
+                            switch (confirmbet)
+                            {
+                                case "y":
+                                    cash -= amountToBet3;
+
+                                    Console.Clear();
+                                    logger.InformationLog("Spinning.");
+                                    Thread.Sleep(500);
+                                    Console.Clear();
+                                    logger.InformationLog("Spinning..");
+                                    Thread.Sleep(500);
+                                    Console.Clear();
+                                    logger.InformationLog("Spinning...");
+                                    Thread.Sleep(500);
+                                    Console.Clear();
+                                    logger.InformationLog("Spinning.");
+                                    Thread.Sleep(500);
+                                    Console.Clear();
+                                    logger.InformationLog("Spinning..");
+                                    Thread.Sleep(500);
+                                    Console.Clear();
+                                    logger.InformationLog("Spinning...");
+                                    Thread.Sleep(500);
+                                    Console.Clear();
+                                    logger.InformationLog("Spinning.");
+                                    Thread.Sleep(500);
+                                    Console.Clear();
+                                    logger.InformationLog("Spinning..");
+                                    Thread.Sleep(500);
+                                    Console.Clear();
+                                    logger.InformationLog("Spinning...");
+                                    Thread.Sleep(500);
+                                    Console.Clear();
+
+                                    if (ran == 1)
+                                    {
+                                        logger.GeneralLog("Result", "Black", ConsoleColor.DarkCyan, ConsoleColor.White);
+                                    }
+                                    else if (ran == 2)
+                                    {
+                                        logger.GeneralLog("Result", "Red", ConsoleColor.DarkCyan, ConsoleColor.White);
+                                    }
+                                    else
+                                    {
+                                        logger.GeneralLog("Result", "undefined", ConsoleColor.DarkCyan, ConsoleColor.White);
+                                    }
+
+                                    Console.WriteLine();
+
+                                    if (ran == 2)
+                                    {
+                                        logger.GeneralLog("Win", $"You've won ${amountToBet3 * 2}", ConsoleColor.DarkGreen, ConsoleColor.White);
+
+                                        cash += amountToBet3 * 2;
+                                    }
+                                    else
+                                    {
+                                        logger.GeneralLog("Loss", $"You've lost ${amountToBet3}", ConsoleColor.DarkRed, ConsoleColor.White);
+                                    }
+
+                                    Console.WriteLine();
+
+                                    logger.GeneralLog("Balance", $"${cash}", ConsoleColor.DarkGreen, ConsoleColor.White);
+
+                                    File.WriteAllBytes("data/data.dat", Encoding.UTF8.GetBytes(cash.ToString()));
+
+                                    Thread.Sleep(3000);
+
+                                    Console.Clear();
+
+                                    break;
+
+                                case "n":
+                                    logger.InformationLog("Returning to main menu.");
+
+                                    Thread.Sleep(3000);
+
+                                    Console.Clear();
+
+                                    goto start;
+
+                                default:
+                                    logger.ErrorLog("Invalid input. Returning to main menu.");
+
+                                    Thread.Sleep(3000);
+
+                                    Console.Clear();
+
+                                    goto start;
+                            }
+                        } else
+                        {
+                            cash -= amountToBet3;
+
+                            Console.Clear();
+                            logger.InformationLog("Spinning.");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning..");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning...");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning.");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning..");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning...");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning.");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning..");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            logger.InformationLog("Spinning...");
+                            Thread.Sleep(500);
+                            Console.Clear();
+
+                            if (ran == 1)
+                            {
+                                logger.GeneralLog("Result", "Black", ConsoleColor.DarkCyan, ConsoleColor.White);
+                            }
+                            else if (ran == 2)
+                            {
+                                logger.GeneralLog("Result", "Red", ConsoleColor.DarkCyan, ConsoleColor.White);
+                            }
+                            else
+                            {
+                                logger.GeneralLog("Result", "undefined", ConsoleColor.DarkCyan, ConsoleColor.White);
+                            }
+
+                            Console.WriteLine();
+
+                            if (ran == 2)
+                            {
+                                logger.GeneralLog("Win", $"You've won ${amountToBet3 * 2}", ConsoleColor.DarkGreen, ConsoleColor.White);
+
+                                cash += amountToBet3 * 2;
+                            }
+                            else
+                            {
+                                logger.GeneralLog("Loss", $"You've lost ${amountToBet3}", ConsoleColor.DarkRed, ConsoleColor.White);
+                            }
+
+                            Console.WriteLine();
+
+                            logger.GeneralLog("Balance", $"${cash}", ConsoleColor.DarkGreen, ConsoleColor.White);
+
+                            File.WriteAllBytes("data/data.dat", Encoding.UTF8.GetBytes(cash.ToString()));
+
+                            Thread.Sleep(3000);
+
+                            Console.Clear();
+                        }
+
+                        break;
+
+                    default:
+                        logger.ErrorLog("Invalid color");
+
+                        Thread.Sleep(5000);
+
+                        Console.Clear();
+
+                        goto start;
+                }
+
+                break;
+
+            case 3:
+                Console.Clear();
+
+                logger.InformationLog("Closing application");
+
+                Thread.Sleep(3000);
+                Environment.Exit(0);
+
+                break;
+
+            case 4:
+                Console.Clear();
+
+                logger.WarningLog("Are you sure you want to reset your data?");
+
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.Write("[Y] ");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write("/");
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine(" [N]");
+
+                Console.WriteLine("");
+
+                logger.InputLog();
+
+                string confirm = Console.ReadLine().ToLower();
+
+                switch (confirm)
+                {
+                    case "y":
+                        Console.Clear();
+
+                        logger.InformationLog("Locating data.dat");
+
+                        Thread.Sleep(350);
+
+                        if (File.Exists("data/data.dat"))
+                        {
+                            logger.InformationLog("Resetting data.dat");
+                            File.Delete("data/data.dat");
+                        } else
+                        {
+                            logger.ErrorLog("data.dat not found!");
+
+                            Thread.Sleep(5000);
+
+                            goto start;
+                        }
+
+                        Thread.Sleep(1000);
+
+                        logger.GeneralLog("Success", "Data reset successfully, please restart the application", ConsoleColor.DarkGreen, ConsoleColor.White);
+
+                        while (true)
+                        {
+                            Console.ReadKey();
+                        }
+                }
+                break;
+
+            default:
+                logger.ErrorLog("Input beyond valid range");
+
+                Thread.Sleep(5000);
+
+                Console.Clear();
+
+                goto start;
+        }
     } catch (Exception ex)
     {
         Console.WriteLine("");
-        logger.ErrorLog(ex.Message);
+        logger.CriticalLog(ex.Message);
         Thread.Sleep(5000);
 
         Console.Clear();
     }
-}
-
-Console.WriteLine("Bet on a number between 0 and 36");
-int bet = Convert.ToInt32(Console.ReadLine());
-
-Console.WriteLine("Bet amount");
-int amount = Convert.ToInt32(Console.ReadLine());
-
-if (amount <= cash)
-{
-    cash -= amount;
-
-    int choosenNumber = rand.Next(1, 2);
-
-    if (bet == choosenNumber)
-    {
-        amount *= 2;
-    } else
-    {
-        amount = 0;
-    }
-
-    cash += amount;
-
-    Console.WriteLine("Number: " + choosenNumber);
-
-    Console.WriteLine("New balance: $" + cash);
-} else
-{
-    Console.WriteLine("Insufficient funds!");
 }
 
 class Logger
